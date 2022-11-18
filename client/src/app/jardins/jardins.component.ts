@@ -4,7 +4,7 @@ import { Jardin } from '../../../../common/tables/Jardin';
 import { Parcelle } from '../../../../common/tables/Parcelle';
 import { Rang } from '../../../../common/tables/Rang';
 import { CommunicationService } from '../services/communication.service';
-import { DialogComponent } from './dialog.component';
+import { DialogComponent } from './../components/dialog/dialog.component';
 import { RangParcelle } from './rang-parcelle';
 import { VarieteContenuDansUnRang } from '../../../../common/tables/VarieteContenuDansUnRang';
 
@@ -23,7 +23,7 @@ export class JardinsComponent implements OnInit {
   constructor(public dialog: MatDialog, private readonly communicationService: CommunicationService) {}
 
   ngOnInit(): void {
-    this.getAllJardins();
+    // this.getAllJardins();
     this.getAllParcelles();
     this.getAllRangs();
     this.getAllVarietesInRangs();
@@ -54,11 +54,11 @@ export class JardinsComponent implements OnInit {
     });
   }
 
-  private getAllJardins(): void {
-    this.communicationService.getAllJardins().subscribe((jardins: Jardin[]) => {
-      this.jardins = jardins ? jardins : [];
-    });
-  }
+  // private getAllJardins(): void {
+  //   this.communicationService.getAllJardins().subscribe((jardins: Jardin[]) => {
+  //     this.jardins = jardins ? jardins : [];
+  //   });
+  // }
 
   private getAllRangs(): void {
     this.communicationService.getAllRangs().subscribe((rangs: Rang[]) => {

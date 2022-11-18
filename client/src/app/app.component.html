@@ -3,19 +3,23 @@
     <a class="navbar-brand title" href="/" matTooltip="Retournez à l'accueil">POSTGRESQL INTEGRATION</a>
     <div class="navbar-expand mr-auto">
       <div class="navbar-nav">
-        <a class="nav-item nav-link active" routerLink="/jardins">Liste des jardins</a>
+        <a class="nav-item nav-link active" routerLink="/planRepas">Liste des plan de repas</a>
         <a class="nav-item nav-link active" routerLink="/plantes">Rechercher une plante</a>
         <a class="nav-item nav-link active" routerLink="/varietes">Modifier une variété</a>
       </div>
     </div>
   </nav>
 
-  <div class="home" *ngIf="route == ''">
-    <p>
-      Bienvenue aux jardins communautaires du Plateau Mont-Royal
-    </p>
-    <button mat-raised-button color="primary" class="btn" routerLink="/jardins">Parcourir nos jardins...<mat-icon>arrow_right</mat-icon></button>
-  </div>
+  <ng-container *ngIf="route == ''">
+    <div class="home" >
+      <p>
+        Bienvenue sur l'application de planification de repas EatWell !
+      </p>
+    </div>
+    <button mat-raised-button color="primary" class="btn" routerLink="/planRepas">Parcourir les plans de repas <mat-icon>arrow_right</mat-icon></button>
+  </ng-container>
+
+  
 
   <router-outlet></router-outlet>
 </div>

@@ -11,6 +11,7 @@ import { Variete } from '../../../../common/tables/Variete';
 import { Semencier } from '../../../../common/tables/Semencier';
 import { AdaptationTypeSolVariete } from '../../../../common/tables/AdaptationTypeSolVariete';
 import { Production } from '../../../../common/tables/Production';
+import { planRepas } from "../interfaces/plan-repas";
 
 @Injectable()
 export class CommunicationService {
@@ -29,10 +30,10 @@ export class CommunicationService {
 
 
   // ======= JARDINS =======
-  getAllJardins(): Observable<Jardin[]> {
+  getAllPlanRepas(): Observable<planRepas[]> {
     return this.http
-      .get<Jardin[]>(this.BASE_URL + "/jardins")
-      .pipe(catchError(this.handleError<Jardin[]>("getAllJardins")));
+      .get<planRepas[]>(this.BASE_URL + "/planRepas")
+      .pipe(catchError(this.handleError<planRepas[]>("getPlanRepas")));
   }
 
   getSpecificJardin(id: number): Observable<Jardin[]> {

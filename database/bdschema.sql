@@ -1,146 +1,81 @@
-/**************************************************************
-	bdschema.sql
-	Charles De Lafontaine 
-	Geneviève Pelletier-Mc Duff 
-	Thierry Beaulieu
-**************************************************************/
+Create table IF NOT EXISTS Client(numéroclient int primary key,
+nomclient varchar(50) not null,
+prénomclient varchar(50) not null,
+adressecourielclient varchar(50) not null Default ('xxx@gmail.com'),
+rueclient varchar(50) not null,
+ville varchar(50) not null,
+codepostalclient varchar(50) not null);
 
-DROP SCHEMA IF EXISTS jardinCommMR CASCADE;
-CREATE SCHEMA jardinCommMR;
+Create table IF NOT EXISTS Téléphone(numéroclient int ,numérodetéléphone varchar(50),
+constraint téléphone_pk primary key (numérodetéléphone, numéroclient),
+constraint numéroclient_fk foreign key (numéroclient) references Client);
 
-SET search_path = jardinCommMR;
+Create table IF NOT EXISTS Fournisseur (numérofournisseur int primary key,
+nomfournisseur varchar(50) not null,
+adressefournisseur varchar(50) not null);
 
-CREATE TYPE DIMENSIONS_T AS (x NUMERIC(10, 2), y NUMERIC(10, 2), z NUMERIC(10, 2));
-CREATE TYPE COORDONNEES_T AS (latitude REAL, longitude REAL);
-CREATE TYPE DESCRIPTIONVARIETE_T AS (plantation VARCHAR(300), entretien VARCHAR(300), recolte VARCHAR(300));
+Create table IF NOT EXISTS Planrepas (numéroplan int primary key,
+catégorie varchar(60) not null,
+fréquence int not null,
+nbpersonnes int not null ,
+nbrcalories int not null,
+prix decimal(10,2) not null  CHECK(prix>0.0),
+numérofournisseur int not null references Fournisseur);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Semencier(
-	nom VARCHAR(150) NOT NULL,
-	siteWeb VARCHAR(150) NOT NULL,
-	PRIMARY KEY (nom)
-);
+Create table IF NOT EXISTS Famille (numéroplan int,
+constraint Famille_pk primary key (numéroplan),
+constraint numéroplan_fk foreign key (numéroplan) references Planrepas);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Menace(
-	typeMenace VARCHAR(150) NOT NULL,
-	description VARCHAR(300) NOT NULL,
-	PRIMARY KEY (typeMenace)
-);
+Create table IF NOT EXISTS Végétarien (numéroplan int,
+typederepas varchar(50) not null,
+constraint Végétarien_pk primary key (numéroplan),
+constraint numéroplan_fk foreign key (numéroplan) references Planrepas);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Jardin(
-	ID SMALLINT NOT NULL,
-	nom VARCHAR(150) NOT NULL,
-	surface NUMERIC(10, 2) NOT NULL,
-	CONSTRAINT surface CHECK (surface >= 0),
-	bPotager BOOLEAN NOT NULL,
-	typeSol VARCHAR(150) NULL,
-	CONSTRAINT typeSol CHECK (typeSol IS NULL OR bPotager),
-	bOrnement BOOLEAN NOT NULL,
-	bVerger BOOLEAN NOT NULL,
-	CONSTRAINT mandatory CHECK (bPotager OR bOrnement OR bVerger),
-	hauteurMaximale NUMERIC(6, 2) NULL,
-	CONSTRAINT hauteurMaximale CHECK (hauteurMaximale IS NULL OR bVerger AND hauteurMaximale > 0),
-	PRIMARY KEY (ID)
-);
+Create table IF NOT EXISTS Pescétarien (numéroplan int,
+typedepoisson varchar(50) not null,
+constraint Pescétarien_pk primary key (numéroplan),
+constraint numéroplan_fk foreign key (numéroplan) references Planrepas);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Variete(
-	nom VARCHAR(150) NOT NULL,
-	anneeMiseEnMarche DATE NOT NULL,
-	description DESCRIPTIONVARIETE_T NOT NULL,
-	periodeMiseEnPlace VARCHAR(25) NOT NULL,
-	periodeRecolte VARCHAR(25) NOT NULL,
-	CONSTRAINT periodes CHECK(periodeMiseEnPlace != periodeRecolte),
-	commentaireGeneral VARCHAR(300) NOT NULL,
-	PRIMARY KEY (nom)
-);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Production(
-	nomVariete VARCHAR(150) NOT NULL,
-	nomSemencier VARCHAR(150) NOT NULL,
-	produitBio BOOLEAN NOT NULL,
-	PRIMARY KEY (nomVariete, nomSemencier),
-	FOREIGN KEY (nomVariete) REFERENCES Variete(nom) ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (nomSemencier) REFERENCES Semencier(nom) ON UPDATE CASCADE ON DELETE CASCADE
-);
+Create table IF NOT EXISTS Rapide(numéroplan int,
+tempsdepreparation int  not null,
+constraint Rapide_pk primary key (numéroplan),
+constraint numéroplan_fk foreign key (numéroplan) references Famille);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.SolutionPossibleMenace(
-	solution VARCHAR(300) NOT NULL,
-	typeMenace VARCHAR(150) NOT NULL,
-	PRIMARY KEY (solution, typeMenace),
-	FOREIGN KEY (typeMenace) REFERENCES Menace(typeMenace) ON UPDATE CASCADE ON DELETE RESTRICT
-);
+Create table IF NOT EXISTS Facile(numéroplan int,
+nbringrédient int  not null,
+constraint Facile_pk primary key (numéroplan),
+constraint numéroplan_fk foreign key (numéroplan) references Famille);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Plante(
-	nomLatin VARCHAR(150) NOT NULL,
-	nom VARCHAR(150) NOT NULL,
-	categorie VARCHAR(150) NOT NULL,
-	typePlante VARCHAR(150) NOT NULL,
-	sousTypePlante VARCHAR(150) NULL,
-	nomVariete VARCHAR(150),
-	PRIMARY KEY (nomLatin),
-	FOREIGN KEY (nomVariete) REFERENCES Variete(nom) ON UPDATE CASCADE ON DELETE SET NULL
-);
+Create table IF NOT EXISTS Abonner(numéroclient int ,
+numéroplan int,
+durée int not null,
+constraint Abonner_pk primary key (numéroclient,numéroplan),
+constraint numéroplan_fk foreign key (numéroplan) references Planrepas,
+constraint numéroclient_fk foreign key (numéroclient) references Client);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.AdaptationTypeSolVariete(
-	adaptationTypeSol VARCHAR(150) NOT NULL,
-	nomVariete VARCHAR(150) NOT NULL,
-	PRIMARY KEY (adaptationTypeSol, nomVariete),
-	FOREIGN KEY (nomVariete) REFERENCES Variete(nom) ON UPDATE CASCADE ON DELETE CASCADE
-);
+Create table IF NOT EXISTS Ingrédient(numéroingrédient int primary key,
+nomingrédient varchar(50) not null,
+paysingrédient varchar (50) not null );
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.AgencementPlante(
-	nomPlante1 VARCHAR(150) NOT NULL,
-	nomPlante2 VARCHAR(150) NOT NULL,
-	CONSTRAINT noms CHECK(nomPlante1 != nomPlante2),
-	caracteristiqueAgencement VARCHAR(150) NOT NULL,
-	PRIMARY KEY (nomPlante1, nomPlante2, caracteristiqueAgencement),
-	FOREIGN KEY (nomPlante1) REFERENCES Plante(nomLatin) ON UPDATE CASCADE ON DELETE RESTRICT,
-	FOREIGN KEY (nomPlante2) REFERENCES Plante(nomLatin) ON UPDATE CASCADE ON DELETE RESTRICT
-);
+Create table IF NOT EXISTS Kitrepas(numérokitrepas int primary key,
+description varchar(400) not null );
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.PlanteContenuJardin(
-	nomPlante VARCHAR(150) NOT NULL,
-	IDJardin SMALLINT NOT NULL,
-	PRIMARY KEY (nomPlante, IDJardin),
-	FOREIGN KEY (nomPlante) REFERENCES Plante(nomLatin) ON UPDATE CASCADE ON DELETE RESTRICT,
-	FOREIGN KEY (IDJardin) REFERENCES Jardin(ID) ON UPDATE CASCADE ON DELETE RESTRICT
-);
+Create table IF NOT EXISTS Contenir(numéroingrédient int ,
+numérokitrepas int,
+constraint Contenir_pk primary key (numérokitrepas,numéroingrédient),
+constraint numérokitrepas_fk foreign key (numérokitrepas) references Kitrepas,
+constraint numéroingrédient_fk foreign key (numéroingrédient) references Ingrédient);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Parcelle(
-	coordonnees COORDONNEES_T NOT NULL,
-	IDJardin SMALLINT NOT NULL,
-	dimensions DIMENSIONS_T NOT NULL,
-	PRIMARY KEY (coordonnees, IDJardin),
-	FOREIGN KEY (IDJardin) REFERENCES Jardin(ID) ON UPDATE CASCADE ON DELETE RESTRICT
-);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.Rang(
-	IDJardin SMALLINT NOT NULL,
-	numero SMALLINT NOT NULL,
-	coordonneesRang COORDONNEES_T NOT NULL,
-	CONSTRAINT numero CHECK (numero >= 1),
-	coordonneesParcelle COORDONNEES_T NOT NULL,
-	dateDebutJachere DATE NULL,
-	dateFinJachere DATE NULL,
-	CONSTRAINT jachere CHECK (dateDebutJachere IS NULL AND dateFinJachere IS NULL OR dateFinJachere > dateDebutJachere AND DATE_PART('day', dateFinJachere::TIMESTAMP - dateDebutJachere::TIMESTAMP)::SMALLINT <= 365),
-	PRIMARY KEY (numero, coordonneesRang, coordonneesParcelle),
-	FOREIGN KEY (coordonneesParcelle, IDJardin) REFERENCES Parcelle(coordonnees, IDJardin) ON UPDATE CASCADE ON DELETE RESTRICT
-);
+Create table IF NOT EXISTS Image (numéroimage int primary key,
+données varchar(400) not null,
+numérokitrepas int not null references Kitrepas);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.VarieteContenuDansUnRang(
-	nomVariete VARCHAR(150) NOT NULL,
-	numero SMALLINT NOT NULL,
-	coordonneesRang COORDONNEES_T NOT NULL,
-	coordonneesParcelle COORDONNEES_T NOT NULL,
-	typeMiseEnPlace VARCHAR(150) NOT NULL,
-	PRIMARY KEY (nomVariete, coordonneesRang),
-	FOREIGN KEY (nomVariete) REFERENCES Variete(nom) ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (numero, coordonneesRang, coordonneesParcelle) REFERENCES Rang(numero, coordonneesRang, coordonneesParcelle) ON UPDATE CASCADE ON DELETE RESTRICT
-);
 
-CREATE TABLE IF NOT EXISTS jardinCommMR.MenaceSubit(
-	nomPlante VARCHAR(150) NOT NULL,
-	typeMenace VARCHAR(150) NOT NULL,
-	PRIMARY KEY (nomPlante, typeMenace),
-	FOREIGN KEY (nomPlante) REFERENCES Plante(nomLatin) ON UPDATE CASCADE ON DELETE RESTRICT,
-	FOREIGN KEY (typeMenace) REFERENCES Menace(typeMenace) ON UPDATE CASCADE ON DELETE RESTRICT
-);
+Create table IF NOT EXISTS Etape(numérokitrepas int,
+descriptionétape varchar(500) not null,
+duréeétape int not null ,
+numerokitrepasetrecomposerde int ,
+constraint Etape_pk primary key (numérokitrepas),
+constraint numérokitrepas_fk foreign key (numérokitrepas) references Kitrepas);

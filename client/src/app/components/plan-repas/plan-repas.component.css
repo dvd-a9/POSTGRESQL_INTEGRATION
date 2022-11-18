@@ -1,0 +1,43 @@
+table {
+  width: 100%;
+}
+
+h1 {
+  font-family: 'Roboto', sans-serif;
+  font-size: 55px;
+  padding-top: 2%;
+  padding-bottom: 1%;
+  color: wheat;
+  font-weight: bold;
+  background-color: #0c260cfa;
+  text-align: center;
+  height: 90px;
+}
+
+th {
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center !important;
+  vertical-align: middle !important;
+  font-family: 'Roboto', sans-serif;
+}
+td{
+  font-size: 20px;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center !important;
+  vertical-align: middle !important;
+  font-family: 'Roboto', sans-serif;
+}
+
+.formatInitial{
+  display:inline;
+  margin-left: 15%;
+  width: 70%;
+  position: absolute;
+  top: 10%;
+}

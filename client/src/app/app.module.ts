@@ -8,26 +8,17 @@ import { AppComponent } from "./app.component";
 import { CommunicationService } from "./services/communication.service";
 import { AppMaterialModule } from './modules/material.module';
 import { JardinsComponent } from './jardins/jardins.component';
-import { VarietesComponent } from './varietes/varietes.component';
-import { PlantesComponent } from './plantes/plantes.component';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DialogComponent } from "./jardins/dialog.component";
-import { AddVarieteComponent } from "./varietes/add-variete.component";
-import { PendingQueryComponent } from "./varietes/pending-query.component";
-import { ModifyVarieteComponent } from "./varietes/modify-variete.component";
-import { DeleteVarieteComponent } from "./varietes/delete-variete.component";
+import { DialogComponent } from "./components/dialog/dialog.component";
+import { PlanRepasComponent } from './components/plan-repas/plan-repas.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     JardinsComponent,
     DialogComponent,
-    VarietesComponent,
-    PlantesComponent,
-    AddVarieteComponent,
-    PendingQueryComponent,
-    ModifyVarieteComponent,
-    DeleteVarieteComponent
+    PlanRepasComponent
   ],
   imports: [
     CommonModule,
@@ -40,7 +31,7 @@ import { DeleteVarieteComponent } from "./varietes/delete-variete.component";
     AppMaterialModule
   ],
   providers: [CommunicationService],
-  entryComponents: [DialogComponent, AddVarieteComponent, PendingQueryComponent, ModifyVarieteComponent, DeleteVarieteComponent],
+  entryComponents: [DialogComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
